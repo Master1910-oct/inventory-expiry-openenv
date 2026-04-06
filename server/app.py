@@ -61,9 +61,10 @@ def create_app() -> FastAPI:
                 "tasks": get_task_names(), "endpoints": ["/reset", "/step", "/state", "/metadata", "/health"]}
 
     @app.post("/reset")
-    def reset(req: ResetRequest):
+    def reset(req: Optional[ResetRequest] = None):
         try:
-            obs = env.reset(task_name=req.task_name)
+            task_name = req.task_name if req else None
+            obs = env.reset(task_name=task_name)
             return {"observation": _obs_dict(obs), "reward": obs.reward,
                     "done": obs.done, "info": {"episode_id": env.state.episode_id}}
         except Exception as exc:
