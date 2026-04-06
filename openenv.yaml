@@ -1,0 +1,100 @@
+spec_version: 1
+
+name: inventory-expiry-env
+display_name: "Inventory & Expiry Management"
+version: "1.0.0"
+description: >
+  A real-world warehouse inventory management environment for training AI agents.
+  Agents must monitor product expiry dates, dispose of expired stock, restock
+  low-inventory items, perform inter-location transfers, apply price markdowns,
+  and place supplier orders — all while maximising efficiency and minimising waste.
+
+tags:
+  - openenv
+  - inventory
+  - supply-chain
+  - expiry
+  - real-world
+  - rl-training
+
+difficulty_levels:
+  - easy
+  - medium
+  - hard
+
+tasks:
+  - name: easy_expiry_check
+    difficulty: easy
+    max_steps: 15
+    description: >
+      Identify and dispose of all expired inventory, flag near-expiry batches,
+      and generate an expiry-risk report.
+
+  - name: medium_restock_transfer
+    difficulty: medium
+    max_steps: 25
+    description: >
+      Balance inventory across 5 warehouse locations through targeted restocking,
+      cross-location transfers, and supplier orders for critical shortages.
+
+  - name: hard_full_audit
+    difficulty: hard
+    max_steps: 40
+    description: >
+      Conduct a complete inventory audit: handle expiry, balance stock, apply
+      price markdowns, generate all three report types, and eliminate all waste.
+
+action_space:
+  type: structured_json
+  description: >
+    JSON object with mandatory field "action_type" (enum) and optional
+    fields depending on the action type.
+  action_types:
+    - list_items
+    - get_item
+    - restock
+    - remove
+    - transfer
+    - update_price
+    - flag_expiry
+    - generate_report
+    - place_order
+    - done
+
+observation_space:
+  type: structured_json
+  fields:
+    - success: bool
+    - done: bool
+    - reward: float
+    - message: str
+    - items: list[ItemRecord]
+    - report: ReportRecord | null
+    - order: OrderRecord | null
+    - total_items_in_stock: int
+    - expired_items_count: int
+    - near_expiry_items_count: int
+    - total_waste_units: int
+    - total_orders_placed: int
+    - episode_reward_so_far: float
+    - error: str | null
+
+reward_range: [-0.5, 3.5]
+reward_description: >
+  Dense intermediate rewards guide each action (+0.20 for disposing expired items,
+  +0.15 for restocking low-stock, -0.15 for disposing valid items, etc.).
+  A terminal bonus of up to +3.0 is awarded based on the task grader score (0.0–1.0).
+
+runtime:
+  type: docker
+  port: 7860
+  framework: fastapi
+
+app:
+  entry: server/app.py
+  object: app
+
+evaluation:
+  scoring: 0.0_to_1.0
+  success_threshold: 0.5
+  grader: deterministic
