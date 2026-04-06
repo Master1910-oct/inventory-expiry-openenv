@@ -31,7 +31,7 @@ from openai import OpenAI
 # ---------------------------------------------------------------------------
 
 API_BASE_URL = os.getenv("API_BASE_URL", "https://api.openai.com/v1")
-API_KEY      = os.getenv("OPENAI_API_KEY") or os.getenv("HF_TOKEN") or "MISSING_KEY"
+API_KEY      = os.getenv("HF_TOKEN") or os.getenv("OPENAI_API_KEY") or "MISSING_KEY"
 MODEL_NAME   = os.getenv("MODEL_NAME", "gpt-4o-mini")
 ENV_BASE_URL = os.getenv("ENV_BASE_URL", "http://localhost:7860")
 TEMPERATURE  = float(os.getenv("TEMPERATURE", "0.2"))
