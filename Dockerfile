@@ -14,7 +14,8 @@ WORKDIR /app
 
 # Copy requirements first for layer caching
 COPY server/requirements.txt /tmp/requirements.txt
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+COPY requirements-inference.txt /tmp/requirements-inference.txt
+RUN pip install --no-cache-dir -r /tmp/requirements.txt -r /tmp/requirements-inference.txt
 
 # Copy source
 COPY . /app
